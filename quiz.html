@@ -1,0 +1,2619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeMaster Quiz Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #5649c0;
+            --correct-color: #00b894;
+            --incorrect-color: #d63031;
+            --neutral-color: #636e72;
+            --light-color: #f5f6fa;
+            --dark-color: #2d3436;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6c5ce7 0%, #0984e3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            color: var(--dark-color);
+            transition: background 0.5s ease;
+            line-height: 1.6;
+        }
+
+        .dark-mode {
+            background: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+            color: var(--light-color);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 850px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dark-mode .container {
+            background: rgba(45, 52, 54, 0.95);
+            color: var(--light-color);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .settings-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary-color);
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .dark-mode .settings-btn {
+            color: #a1a1a1;
+        }
+
+        .settings-btn:hover {
+            transform: rotate(30deg);
+            color: var(--secondary-color);
+        }
+
+        h1, h2 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            color: var(--primary-color);
+            margin-top: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode h1 {
+            color: #9c88ff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--dark-color);
+        }
+
+        .dark-mode h2 {
+            color: var(--light-color);
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .flex-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .flex-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .btn {
+            font-size: 1.2rem;
+            padding: 1rem 0;
+            width: 22rem;
+            max-width: 100%;
+            text-align: center;
+            margin-bottom: 1.2rem;
+            text-decoration: none;
+            color: white;
+            background: var(--primary-color);
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn[disabled] {
+            background: #b2bec3;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: var(--neutral-color);
+        }
+
+        .btn-secondary:hover {
+            background: #576574;
+        }
+
+        .btn-small {
+            font-size: 1rem;
+            padding: 0.7rem 0;
+            width: 12rem;
+        }
+
+        .category-selector {
+            margin-bottom: 2.5rem;
+            width: 100%;
+        }
+
+        .category-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .dark-mode .category-title {
+            color: #9c88ff;
+        }
+
+        .category-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .category-item {
+            background: #e0e0e0;
+            padding: 0.9rem 1.8rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dark-mode .category-item {
+            background: #576574;
+            color: #fff;
+        }
+
+        .category-item:hover, .category-item.selected {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .difficulty-selector {
+            margin-bottom: 2.5rem;
+            width: 100%;
+        }
+
+        .difficulty-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .dark-mode .difficulty-title {
+            color: #9c88ff;
+        }
+
+        .difficulty-container {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+        }
+
+        .difficulty-item {
+            background: #e0e0e0;
+            padding: 0.9rem 1.8rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .difficulty-item {
+            background: #576574;
+            color: #fff;
+        }
+
+        .difficulty-item:hover, .difficulty-item.selected {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* FORMS */
+        form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input {
+            margin-bottom: 1.5rem;
+            width: 22rem;
+            max-width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            border: 2px solid #dfe6e9;
+            border-radius: 8px;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .dark-mode input {
+            background: #576574;
+            color: white;
+            border-color: #636e72;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        input::placeholder {
+            color: #b2bec3;
+        }
+
+        .dark-mode input::placeholder {
+            color: #a4b0be;
+        }
+
+        /* GAME */
+        .choice-container {
+            display: flex;
+            margin-bottom: 1rem;
+            width: 100%;
+            border-radius: 8px;
+            background: #f1f2f6;
+            font-size: 1.1rem;
+            border: 2px solid transparent;
+            transition: var(--transition);
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .dark-mode .choice-container {
+            background: #576574;
+        }
+
+        .choice-container:hover {
+            cursor: pointer;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .choice-prefix {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.2rem 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 3.5rem;
+        }
+
+        .choice-text {
+            padding: 1.2rem 1.5rem;
+            width: 100%;
+        }
+
+        .dark-mode .choice-text {
+            color: white;
+        }
+
+        .correct {
+            background: var(--correct-color);
+            color: white;
+            border-color: var(--correct-color);
+        }
+
+        .correct .choice-prefix {
+            background: #00a884;
+        }
+
+        .incorrect {
+            background: var(--incorrect-color);
+            color: white;
+            border-color: var(--incorrect-color);
+        }
+
+        .incorrect .choice-prefix {
+            background: #c0392b;
+        }
+
+        /* HUD */
+        #hud {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2.5rem;
+            gap: 1.5rem;
+        }
+
+        .hud-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .hud-prefix {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .dark-mode .hud-prefix {
+            color: #9c88ff;
+        }
+
+        .hud-main-text {
+            font-size: 2.2rem;
+            font-weight: bold;
+        }
+
+        #progressBar {
+            width: 100%;
+            height: 0.8rem;
+            border: none;
+            margin-top: 1rem;
+            border-radius: 50px;
+            overflow: hidden;
+            background: #dfe6e9;
+        }
+
+        .dark-mode #progressBar {
+            background: #576574;
+        }
+
+        #progressBarFull {
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        #timer {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 1rem;
+        }
+
+        .timer-container {
+            position: relative;
+        }
+
+        .timer-circle {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary-color) 0% 100%, #dfe6e9 100% 100%);
+            transition: background 0.3s ease;
+        }
+
+        .dark-mode .timer-circle {
+            background: conic-gradient(var(--primary-color) 0% 100%, #576574 100% 100%);
+        }
+
+        .timer-inner {
+            position: absolute;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: white;
+            top: 6px;
+            left: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .timer-inner {
+            background: #2d3436;
+            color: white;
+        }
+
+        /* SETTINGS */
+        #settings {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+
+        .dark-mode #settings {
+            background: rgba(45, 52, 54, 0.98);
+        }
+
+        .settings-title {
+            margin-bottom: 2.5rem;
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .dark-mode .settings-title {
+            color: #9c88ff;
+        }
+
+        .settings-options {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.8rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .setting-item {
+            display: flex;
+            width: 100%;
+            max-width: 450px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #dfe6e9;
+        }
+
+        .dark-mode .setting-item {
+            border-bottom-color: #576574;
+        }
+
+        .setting-label {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .toggle {
+            position: relative;
+            width: 70px;
+            height: 34px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(36px);
+        }
+
+        .slider-value {
+            font-size: 1.2rem;
+            width: 2.5rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .range-slider {
+            width: 220px;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            border-radius: 5px;
+            background: #dfe6e9;
+            outline: none;
+            margin-left: 1rem;
+        }
+
+        .dark-mode .range-slider {
+            background: #576574;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+
+        .range-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .range-slider::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* HIGH SCORES */
+        #highScoresList {
+            list-style: none;
+            margin-bottom: 2.5rem;
+            width: 100%;
+            max-width: 600px;
+            padding: 0 1rem;
+        }
+
+        .high-score {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            padding: 1.2rem;
+            background: #f1f2f6;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            align-items: center;
+        }
+
+        .dark-mode .high-score {
+            background: #576574;
+            color: white;
+        }
+
+        .high-score:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .score-category {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+
+        .dark-mode .score-category {
+            color: #9c88ff;
+        }
+
+        .score-points {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .dark-mode .score-points {
+            color: #9c88ff;
+        }
+
+        /* FEEDBACK MODAL */
+        #feedbackModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 550px;
+            box-shadow: var(--shadow);
+            position: relative;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dark-mode .modal-content {
+            background: #2d3436;
+            color: white;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            font-size: 1.8rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--neutral-color);
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-modal:hover {
+            background: #f1f2f6;
+            color: var(--primary-color);
+        }
+
+        .dark-mode .close-modal:hover {
+            background: #576574;
+        }
+
+        .feedback-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.8rem;
+            text-align: center;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .dark-mode .feedback-title {
+            color: #9c88ff;
+        }
+
+        .explanation {
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            padding: 1.2rem;
+            background: #f1f2f6;
+            border-radius: 8px;
+        }
+
+        .dark-mode .explanation {
+            background: #576574;
+        }
+
+        .answer-summary {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+        }
+
+        .correct-answer {
+            background: rgba(0, 184, 148, 0.1);
+        }
+
+        .dark-mode .correct-answer {
+            background: rgba(0, 184, 148, 0.2);
+        }
+
+        .incorrect-answer {
+            background: rgba(214, 48, 49, 0.1);
+        }
+
+        .dark-mode .incorrect-answer {
+            background: rgba(214, 48, 49, 0.2);
+        }
+
+        .answer-label {
+            color: var(--primary-color);
+            font-weight: 600;
+            flex: 0 0 120px;
+        }
+
+        .dark-mode .answer-label {
+            color: #9c88ff;
+        }
+
+        /* RESULT PAGE */
+        .result-stats {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-item {
+            background: #f1f2f6;
+            padding: 1.5rem 1rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .dark-mode .stat-item {
+            background: #576574;
+            color: white;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .dark-mode .stat-value {
+            color: #9c88ff;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* LOADING SPINNER */
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 300px;
+        }
+
+        .spinner {
+            border: 6px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 6px solid var(--primary-color);
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+
+        .dark-mode .spinner {
+            border-color: rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary-color);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        /* MEDIA QUERIES */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 1.8rem;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 0.9rem 0;
+            }
+
+            .choice-container {
+                font-size: 1rem;
+            }
+
+            .choice-prefix {
+                padding: 1rem;
+                min-width: 3rem;
+            }
+
+            .choice-text {
+                padding: 1rem;
+            }
+
+            .hud-main-text {
+                font-size: 1.8rem;
+            }
+
+            #hud {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .hud-item {
+                width: 100%;
+            }
+
+            .high-score {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+
+            .score-info {
+                margin-bottom: 0.5rem;
+            }
+
+            .score-points {
+                text-align: left;
+                width: 100%;
+            }
+
+            .result-stats {
+                gap: 1rem;
+            }
+
+            .stat-item {
+                min-width: calc(50% - 0.5rem);
+            }
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        /* Category specific colors */
+        .html-color { background-color: #e44d26; color: white; }
+        .css-color { background-color: #264de4; color: white; }
+        .js-color { background-color: #f7df1e; color: #2d3436; }
+        .react-color { background-color: #61dafb; color: #2d3436; }
+        .node-color { background-color: #68a063; color: white; }
+        .python-color { background-color: #3572A5; color: white; }
+        .java-color { background-color: #007396; color: white; }
+        
+        /* Confetti animation */
+        .confetti {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            position: absolute;
+            left: 50%;
+            animation: confetti 5s ease-in-out -2s infinite;
+            transform-origin: left top;
+            z-index: 1000;
+        }
+
+        .confetti:nth-child(1) {
+            background-color: #f2d74e; left: 10%; animation-delay: 0;
+        }
+        .confetti:nth-child(2) {
+            background-color: #95c3de; left: 20%; animation-delay: -1s;
+        }
+        .confetti:nth-child(3) {
+            background-color: #ff9a91; left: 30%; animation-delay: -1.5s;
+        }
+        .confetti:nth-child(4) {
+            background-color: #f2d74e; left: 40%; animation-delay: -2s;
+        }
+        .confetti:nth-child(5) {
+            background-color: #95c3de; left: 50%; animation-delay: -0.5s;
+        }
+        .confetti:nth-child(6) {
+            background-color: #ff9a91; left: 60%; animation-delay: -3s;
+        }
+        .confetti:nth-child(7) {
+            background-color: #f2d74e; left: 70%; animation-delay: -2.5s;
+        }
+        .confetti:nth-child(8) {
+            background-color: #95c3de; left: 80%; animation-delay: -1.5s;
+        }
+        .confetti:nth-child(9) {
+            background-color: #ff9a91; left: 90%; animation-delay: -0.75s;
+        }
+        .confetti:nth-child(10) {
+            background-color: #f2d74e; left: 100%; animation-delay: -2.25s;
+        }
+
+        @keyframes confetti {
+            0% { transform: rotateZ(15deg) rotateY(0deg) translate(0, 0); opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { transform: rotateZ(5deg) rotateY(720deg) translate(-10vw, 100vh); opacity: 0; }
+        }
+
+        /* Dark/Light Theme Switch */
+        .theme-toggle {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary-color);
+            transition: var(--transition);
+            z-index: 10;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .dark-mode .theme-toggle {
+            color: #9c88ff;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(108, 92, 231, 0.1);
+            transform: scale(1.1);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background: rgba(156, 136, 255, 0.1);
+        }
+
+        /* Category icons */
+        .category-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 480px) {
+            .container {
+                padding: 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .choice-container {
+                margin-bottom: 0.8rem;
+                flex-direction: column;
+            }
+            
+            .choice-prefix {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            .choice-text {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            #timer {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .timer-inner {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+
+            .stat-item {
+                min-width: 100%;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Pulse animation for correct answers */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+
+        /* Bounce animation for buttons */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .bounce {
+            animation: bounce 1s;
+        }
+
+        /* Tooltip for category items */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #2d3436;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Floating animation for home screen */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Add this to your CSS section */
+
+        /* Category selected state */
+        .category-item.selected {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: 2px solid var(--primary-color);
+        }
+
+        /* Difficulty selected state */
+        .difficulty-item.selected {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Dark mode adjustments */
+        .dark-mode .difficulty-item.selected {
+            background: var(--primary-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <button id="themeToggle" class="theme-toggle">☀️</button>
+
+    <!-- HOME SECTION -->
+    <div class="container fade-in" id="home">
+        <h1 class="floating">CodeMaster Quiz</h1>
+        <button id="settingsBtn" class="settings-btn">⚙️</button>
+        
+        <div class="category-selector">
+            <h3 class="category-title">Select Your Challenge</h3>
+            <div class="category-container">
+                <div class="category-item html-color selected" data-category="html">
+                    <span class="category-icon">📄</span> HTML
+                </div>
+                <div class="category-item css-color" data-category="css">
+                    <span class="category-icon">🎨</span> CSS
+                </div>
+                <div class="category-item js-color" data-category="javascript">
+                    <span class="category-icon">⚡</span> JavaScript
+                </div>
+                <div class="category-item react-color" data-category="react">
+                    <span class="category-icon">⚛️</span> React
+                </div>
+                <div class="category-item node-color" data-category="node">
+                    <span class="category-icon">🖥️</span> Node.js
+                </div>
+                <div class="category-item python-color" data-category="python">
+                    <span class="category-icon">🐍</span> Python
+                </div>
+                <div class="category-item java-color" data-category="java">
+                    <span class="category-icon">☕</span> Java
+                </div>
+            </div>
+        </div>
+        
+        <div class="difficulty-selector">
+            <h3 class="difficulty-title">Choose Difficulty</h3>
+            <div class="difficulty-container">
+                <div class="difficulty-item" data-difficulty="easy">Beginner</div>
+                <div class="difficulty-item selected" data-difficulty="medium">Intermediate</div>
+                <div class="difficulty-item" data-difficulty="hard">Expert</div>
+            </div>
+        </div>
+        
+        <div class="flex-center flex-column">
+            <button id="start-btn" class="btn slide-in bounce">Start Challenge</button>
+            <button id="highscores-btn" class="btn btn-secondary slide-in">Leaderboard</button>
+        </div>
+    </div>
+
+    <!-- SETTINGS SECTION -->
+    <div id="settings" class="fade-in">
+        <h2 class="settings-title">Game Settings</h2>
+        <div class="settings-options">
+            <div class="setting-item">
+                <span class="setting-label">Sound Effects</span>
+                <label class="toggle">
+                    <input type="checkbox" id="soundToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Show Explanations</span>
+                <label class="toggle">
+                    <input type="checkbox" id="explanationsToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Timer</span>
+                <label class="toggle">
+                    <input type="checkbox" id="timerToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Questions: <span id="questionsValue">10</span></span>
+                <input type="range" min="5" max="20" value="10" class="range-slider" id="questionsRange">
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">Time per question: <span id="timeValue">15</span>s</span>
+                <input type="range" min="5" max="30" value="15" class="range-slider" id="timeRange">
+            </div>
+        </div>
+        <button id="closeSettings" class="btn">Save Settings</button>
+    </div>
+
+    <!-- LOADING SECTION -->
+    <div class="container fade-in" id="loading" style="display: none;">
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <p class="loading-text">Preparing your challenge...</p>
+        </div>
+    </div>
+
+    <!-- GAME SECTION -->
+    <div class="container fade-in" id="game" style="display: none;">
+        <div id="hud">
+            <div class="hud-item">
+                <p class="hud-prefix">
+                    Question
+                </p>
+                <h1 class="hud-main-text" id="questionCounter"></h1>
+                <div id="progressBar">
+                    <div id="progressBarFull"></div>
+                </div>
+            </div>
+            <div class="hud-item timer-container">
+                <p class="hud-prefix">Time</p>
+                <div id="timer">
+                    <div class="timer-circle" id="timerCircle"></div>
+                    <div class="timer-inner" id="timerCount">15</div>
+                </div>
+            </div>
+            <div class="hud-item">
+                <p class="hud-prefix">
+                    Score
+                </p>
+                <h1 class="hud-main-text" id="score">0</h1>
+            </div>
+        </div>
+        <h2 id="question" class="slide-in">Sample Question Text?</h2>
+        <div class="choice-container slide-in" data-number="1">
+            <p class="choice-prefix">A</p>
+            <p class="choice-text">Choice 1</p>
+        </div>
+        <div class="choice-container slide-in" data-number="2">
+            <p class="choice-prefix">B</p>
+            <p class="choice-text">Choice 2</p>
+        </div>
+        <div class="choice-container slide-in" data-number="3">
+            <p class="choice-prefix">C</p>
+            <p class="choice-text">Choice 3</p>
+        </div>
+        <div class="choice-container slide-in" data-number="4">
+            <p class="choice-prefix">D</p>
+            <p class="choice-text">Choice 4</p>
+        </div>
+    </div>
+
+    <!-- FEEDBACK MODAL -->
+    <div id="feedbackModal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h3 class="feedback-title">Answer Feedback</h3>
+            <div class="answer-summary incorrect-answer">
+                <span class="answer-label">Your Answer:</span>
+                <span id="userAnswer"></span>
+            </div>
+            <div class="answer-summary correct-answer">
+                <span class="answer-label">Correct Answer:</span>
+                <span id="correctAnswer"></span>
+            </div>
+            <div class="explanation" id="explanation">
+                This is where the explanation for the correct answer would appear.
+            </div>
+            <button id="nextQuestion" class="btn">Continue</button>
+        </div>
+    </div>
+
+    <!-- END GAME SECTION -->
+    <div class="container fade-in" id="end" style="display: none;">
+        <h1>Challenge Completed!</h1>
+        <div class="result-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="finalScore">0</div>
+                <div class="stat-label">Total Score</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="correctAnswers">0</div>
+                <div class="stat-label">Correct Answers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="incorrectAnswers">0</div>
+                <div class="stat-label">Incorrect Answers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="timeTaken">0</div>
+                <div class="stat-label">Seconds</div>
+            </div>
+        </div>
+        <form id="saveScoreForm">
+            <input type="text" id="username" placeholder="Enter your name to save score" required>
+            <button type="submit" class="btn pulse">Save My Score</button>
+        </form>
+        <div class="flex-center flex-column">
+            <button id="playAgainBtn" class="btn">Play Again</button>
+            <button id="goHomeBtn" class="btn btn-secondary">Back to Home</button>
+        </div>
+    </div>
+
+    <!-- HIGH SCORES SECTION -->
+    <div class="container fade-in" id="highScores" style="display: none;">
+        <h1>Leaderboard</h1>
+        <ul id="highScoresList">
+            <!-- High scores will be dynamically inserted here -->
+        </ul>
+        <div class="flex-center flex-column">
+            <button id="goHomeFromScores" class="btn">Back to Home</button>
+        </div>
+    </div>
+
+    <script>
+        // Category selection
+        document.querySelectorAll('.category-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.category-item').forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                selectedCategory = item.dataset.category;
+            });
+        });
+
+        document.querySelectorAll('.difficulty-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.difficulty-item').forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                selectedDifficulty = item.dataset.difficulty;
+            });
+        });
+        
+        // DOM Elements
+        const home = document.getElementById('home');
+        const game = document.getElementById('game');
+        const end = document.getElementById('end');
+        const highScores = document.getElementById('highScores');
+        const loading = document.getElementById('loading');
+        const settings = document.getElementById('settings');
+        const feedbackModal = document.getElementById('feedbackModal');
+        
+        const startBtn = document.getElementById('start-btn');
+        const highscoresBtn = document.getElementById('highscores-btn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const closeSettings = document.getElementById('closeSettings');
+        const nextQuestionBtn = document.getElementById('nextQuestion');
+        const playAgainBtn = document.getElementById('playAgainBtn');
+        const goHomeBtn = document.getElementById('goHomeBtn');
+        const goHomeFromScores = document.getElementById('goHomeFromScores');
+        const saveScoreForm = document.getElementById('saveScoreForm');
+        
+        const questionElement = document.getElementById('question');
+        const choices = Array.from(document.getElementsByClassName('choice-container'));
+        const questionCounterText = document.getElementById('questionCounter');
+        const scoreText = document.getElementById('score');
+        const progressBarFull = document.getElementById('progressBarFull');
+        const timerCount = document.getElementById('timerCount');
+        const timerCircle = document.getElementById('timerCircle');
+        
+        const userAnswerElement = document.getElementById('userAnswer');
+        const correctAnswerElement = document.getElementById('correctAnswer');
+        const explanationElement = document.getElementById('explanation');
+        
+        const finalScoreElement = document.getElementById('finalScore');
+        const correctAnswersElement = document.getElementById('correctAnswers');
+        const incorrectAnswersElement = document.getElementById('incorrectAnswers');
+        const timeTakenElement = document.getElementById('timeTaken');
+        
+        const themeToggle = document.getElementById('themeToggle');
+        
+        // Game variables
+        let currentQuestion = {};
+        let acceptingAnswers = false;
+        let score = 0;
+        let questionCounter = 0;
+        let availableQuestions = [];
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let timeTaken = 0;
+        let timer;
+        let timePerQuestion = 15;
+        
+        // Settings
+        let soundEnabled = true;
+        let explanationsEnabled = true;
+        let timerEnabled = true;
+        let totalQuestions = 10;
+        
+        // Selected category and difficulty
+        let selectedCategory = 'html';
+        let selectedDifficulty = 'medium';
+        
+        // Sample questions database
+        const questionsDatabase = {
+            html: {
+                easy: [
+                    {
+                        question: "What does HTML stand for?",
+                        choice1: "Hyper Text Markup Language",
+                        choice2: "Hyperlinks and Text Markup Language",
+                        choice3: "Home Tool Markup Language",
+                        choice4: "Hyper Text Makeup Language",
+                        answer: 1,
+                        explanation: "HTML stands for Hyper Text Markup Language. It's the standard markup language for creating web pages and web applications."
+                    },
+                    {
+                        question: "Which HTML element is used to define the structure of an HTML document?",
+                        choice1: "<body>",
+                        choice2: "<html>",
+                        choice3: "<head>",
+                        choice4: "<!DOCTYPE>",
+                        answer: 2,
+                        explanation: "The <html> element is the root element that defines the whole HTML document. All other elements must be descendants of this element."
+                    },
+                    {
+                        question: "Which HTML attribute is used to define inline styles?",
+                        choice1: "class",
+                        choice2: "styles",
+                        choice3: "font",
+                        choice4: "style",
+                        answer: 4,
+                        explanation: "The style attribute is used to add inline CSS styles to an HTML element. For example: <p style='color:red;'>Red text</p>"
+                    }
+                ],
+                medium: [
+                    {
+                        question: "What is the purpose of the <meta> tag in HTML?",
+                        choice1: "To define metadata about the HTML document",
+                        choice2: "To create a navigation menu",
+                        choice3: "To embed multimedia content",
+                        choice4: "To style the webpage",
+                        answer: 1,
+                        explanation: "The <meta> tag provides metadata about the HTML document, such as character encoding, viewport settings, and descriptions for search engines."
+                    },
+                    {
+                        question: "Which HTML5 element is used to play video files?",
+                        choice1: "<media>",
+                        choice2: "<video>",
+                        choice3: "<movie>",
+                        choice4: "<play>",
+                        answer: 2,
+                        explanation: "The <video> element is used to embed video content in a document. It may contain one or more video sources, represented by the src attribute or the <source> element."
+                    },
+                    {
+                        question: "What is the correct HTML for creating a hyperlink?",
+                        choice1: "<a url='https://example.com'>Example</a>",
+                        choice2: "<a href='https://example.com'>Example</a>",
+                        choice3: "<a>https://example.com</a>",
+                        choice4: "<link>https://example.com</link>",
+                        answer: 2,
+                        explanation: "The correct syntax for creating a hyperlink is <a href='URL'>link text</a>. The href attribute specifies the URL of the page the link goes to."
+                    }
+                ],
+                hard: [
+                    {
+                        question: "What does the 'defer' attribute do when added to a script tag?",
+                        choice1: "Delays script execution until the page is fully loaded",
+                        choice2: "Prevents the script from executing",
+                        choice3: "Makes the script execute asynchronously",
+                        choice4: "Loads the script only when needed",
+                        answer: 1,
+                        explanation: "The defer attribute is a boolean attribute that specifies that the script is executed when the page has finished parsing. It's useful for scripts that need the complete DOM."
+                    },
+                    {
+                        question: "Which HTML5 API allows web applications to store data locally in a user's browser?",
+                        choice1: "WebSQL",
+                        choice2: "LocalStorage",
+                        choice3: "Cookies",
+                        choice4: "Session API",
+                        answer: 2,
+                        explanation: "The Web Storage API (localStorage and sessionStorage) allows web applications to store data locally in the user's browser with no expiration date (localStorage) or for one session (sessionStorage)."
+                    },
+                    {
+                        question: "What is the purpose of the HTML5 <canvas> element?",
+                        choice1: "To display database records",
+                        choice2: "To draw graphics via JavaScript",
+                        choice3: "To create responsive layouts",
+                        choice4: "To embed external applications",
+                        answer: 2,
+                        explanation: "The <canvas> element is used to draw graphics on the fly via JavaScript. It can be used for drawing graphs, photo composition, animations, and even real-time video processing."
+                    }
+                ]
+            },
+            css: {
+                easy: [
+                    {
+                        question: "What does CSS stand for?",
+                        choice1: "Computer Style Sheets",
+                        choice2: "Creative Style Sheets",
+                        choice3: "Cascading Style Sheets",
+                        choice4: "Colorful Style Sheets",
+                        answer: 3,
+                        explanation: "CSS stands for Cascading Style Sheets. It's a style sheet language used for describing the presentation of a document written in HTML."
+                    },
+                    {
+                        question: "Which CSS property is used to change the text color of an element?",
+                        choice1: "text-color",
+                        choice2: "font-color",
+                        choice3: "color",
+                        choice4: "text-style",
+                        answer: 3,
+                        explanation: "The 'color' property in CSS is used to set the color of the text content of an element. For example: color: red;"
+                    },
+                    {
+                        question: "Where in an HTML document is the correct place to refer to an external style sheet?",
+                        choice1: "In the <body> section",
+                        choice2: "At the end of the document",
+                        choice3: "In the <head> section",
+                        choice4: "After the closing </html> tag",
+                        answer: 3,
+                        explanation: "External style sheets should be referenced in the <head> section of the HTML document using the <link> element. This ensures styles are loaded before the page content."
+                    }
+                ],
+                medium: [
+                    {
+                        question: "Which CSS property controls the text size?",
+                        choice1: "text-style",
+                        choice2: "font-size",
+                        choice3: "text-size",
+                        choice4: "font-style",
+                        answer: 2,
+                        explanation: "The 'font-size' property in CSS is used to specify the size of the font. It can be set in pixels, ems, rems, percentages, or other units."
+                    },
+                    {
+                        question: "How do you make each word in a text start with a capital letter?",
+                        choice1: "text-transform: capitalize",
+                        choice2: "text-transform: uppercase",
+                        choice3: "text-style: capital",
+                        choice4: "You can't do that with CSS",
+                        answer: 1,
+                        explanation: "The 'text-transform: capitalize' CSS property makes the first character of each word uppercase. 'Uppercase' would make all characters uppercase."
+                    },
+                    {
+                        question: "Which CSS property is used to change the font of an element?",
+                        choice1: "font-family",
+                        choice2: "font-style",
+                        choice3: "font-weight",
+                        choice4: "text-font",
+                        answer: 1,
+                        explanation: "The 'font-family' property specifies the font for an element. It can hold several font names as a fallback system."
+                    }
+                ],
+                hard: [
+                    {
+                        question: "What is the CSS box model?",
+                        choice1: "A model for creating 3D boxes",
+                        choice2: "A layout model consisting of margins, borders, padding, and content",
+                        choice3: "A method for organizing CSS properties",
+                        choice4: "A way to create responsive grids",
+                        answer: 2,
+                        explanation: "The CSS box model describes the rectangular boxes generated for elements in the document tree and consists of margins, borders, padding, and the actual content."
+                    },
+                    {
+                        question: "What does the 'z-index' property in CSS do?",
+                        choice1: "Controls the horizontal stacking order of elements",
+                        choice2: "Controls the vertical stacking order of elements",
+                        choice3: "Sets the zoom level of an element",
+                        choice4: "Controls the element's position on the z-axis in 3D space",
+                        answer: 2,
+                        explanation: "The z-index property specifies the stack order of an element. An element with greater stack order is always in front of an element with a lower stack order."
+                    },
+                    {
+                        question: "What is the purpose of CSS media queries?",
+                        choice1: "To apply styles based on device characteristics",
+                        choice2: "To query a database for style information",
+                        choice3: "To create animations in CSS",
+                        choice4: "To import external style sheets",
+                        answer: 1,
+                        explanation: "Media queries allow you to apply CSS styles depending on a device's general type (like print vs. screen) or specific characteristics (like screen resolution or browser viewport width)."
+                    }
+                ]
+            },
+            javascript: {
+                easy: [
+                    {
+                        question: "Which of the following is NOT a JavaScript data type?",
+                        choice1: "Number",
+                        choice2: "String",
+                        choice3: "Boolean",
+                        choice4: "Float",
+                        answer: 4,
+                        explanation: "JavaScript has several data types including Number, String, Boolean, Object, Null, and Undefined. 'Float' is not a separate data type in JavaScript - it's part of the Number type."
+                    },
+                    {
+                        question: "How do you write 'Hello World' in an alert box?",
+                        choice1: "alertBox('Hello World');",
+                        choice2: "msg('Hello World');",
+                        choice3: "alert('Hello World');",
+                        choice4: "msgBox('Hello World');",
+                        answer: 3,
+                        explanation: "The alert() method displays an alert box with a specified message and an OK button. The correct syntax is alert('Hello World');"
+                    },
+                    {
+                        question: "How do you create a function in JavaScript?",
+                        choice1: "function = myFunction()",
+                        choice2: "function:myFunction()",
+                        choice3: "function myFunction()",
+                        choice4: "create myFunction()",
+                        answer: 3,
+                        explanation: "Functions in JavaScript are defined using the function keyword followed by the name of the function and parentheses. For example: function myFunction() { // code }"
+                    }
+                ],
+                medium: [
+                    {
+                        question: "What will the following code return: Boolean(10 > 9)",
+                        choice1: "true",
+                        choice2: "false",
+                        choice3: "NaN",
+                        choice4: "undefined",
+                        answer: 1,
+                        explanation: "The expression 10 > 9 evaluates to true, and the Boolean() function will return the boolean value true."
+                    },
+                    {
+                        question: "What is the correct way to write a JavaScript array?",
+                        choice1: "var colors = (1:'red', 2:'green', 3:'blue')",
+                        choice2: "var colors = ['red', 'green', 'blue']",
+                        choice3: "var colors = 'red', 'green', 'blue'",
+                        choice4: "var colors = 1 = ('red'), 2 = ('green'), 3 = ('blue')",
+                        answer: 2,
+                        explanation: "The correct syntax for creating an array in JavaScript is using square brackets with elements separated by commas: var colors = ['red', 'green', 'blue'];"
+                    },
+                    {
+                        question: "How does a 'for' loop start?",
+                        choice1: "for (i = 0; i <= 5; i++)",
+                        choice2: "for (i = 0; i <= 5)",
+                        choice3: "for i = 1 to 5",
+                        choice4: "for (i <= 5; i++)",
+                        answer: 1,
+                        explanation: "A for loop in JavaScript starts with the keyword 'for', followed by parentheses containing three statements: initialization (i = 0), condition (i <= 5), and final expression (i++)."
+                    }
+                ],
+                hard: [
+                    {
+                        question: "What is closure in JavaScript?",
+                        choice1: "A function that has access to its own scope, the outer function's variables, and global variables",
+                        choice2: "A way to close a web page",
+                        choice3: "A method to hide variables",
+                        choice4: "A type of loop",
+                        answer: 1,
+                        explanation: "A closure is a function that has access to its own scope, the outer function's variables, and the global variables, even after the outer function has returned."
+                    },
+                    {
+                        question: "What does the 'this' keyword refer to in JavaScript?",
+                        choice1: "The current function",
+                        choice2: "The previous object",
+                        choice3: "The object it belongs to",
+                        choice4: "The global window object",
+                        answer: 3,
+                        explanation: "In JavaScript, the 'this' keyword refers to the object it belongs to. It has different values depending on where it is used."
+                    },
+                    {
+                        question: "What is hoisting in JavaScript?",
+                        choice1: "Moving variable declarations to the top of their scope",
+                        choice2: "A type of loop",
+                        choice3: "A way to hide variables",
+                        choice4: "A method to close a web page",
+                        answer: 1,
+                        explanation: "Hoisting is JavaScript's default behavior of moving declarations to the top of the current scope (script or function). Note that only declarations are hoisted, not initializations."
+                    }
+                ]
+            },
+            react: {
+                easy: [
+                    {
+                        question: "What is React?",
+                        choice1: "A programming language",
+                        choice2: "A JavaScript library for building user interfaces",
+                        choice3: "A database management system",
+                        choice4: "A CSS framework",
+                        answer: 2,
+                        explanation: "React is a JavaScript library for building user interfaces, developed by Facebook. It's used for building single-page applications and reusable UI components."
+                    },
+                    {
+                        question: "What is JSX?",
+                        choice1: "A syntax extension for JavaScript",
+                        choice2: "A templating language",
+                        choice3: "A CSS preprocessor",
+                        choice4: "A database query language",
+                        answer: 1,
+                        explanation: "JSX is a syntax extension for JavaScript that allows you to write HTML-like code in your JavaScript. It gets compiled to regular JavaScript function calls."
+                    },
+                    {
+                        question: "How do you create a React component?",
+                        choice1: "function MyComponent() { return <div>Hello</div>; }",
+                        choice2: "class MyComponent extends React.Component { render() { return <div>Hello</div>; } }",
+                        choice3: "Both of the above",
+                        choice4: "None of the above",
+                        answer: 3,
+                        explanation: "In React, you can create components either as functions (functional components) or as classes (class components). Both are valid ways to create components."
+                    }
+                ],
+                medium: [
+                    {
+                        question: "What is the virtual DOM?",
+                        choice1: "A lightweight copy of the real DOM",
+                        choice2: "A 3D rendering of the DOM",
+                        choice3: "A backup of the DOM",
+                        choice4: "A shadow version of the DOM",
+                        answer: 1,
+                        explanation: "The virtual DOM is a lightweight copy of the real DOM that React uses to optimize updates. React compares the virtual DOM with a previous version to determine the most efficient way to update the browser's DOM."
+                    },
+                    {
+                        question: "What are props in React?",
+                        choice1: "Internal state of a component",
+                        choice2: "Functions that perform side effects",
+                        choice3: "Inputs to a component",
+                        choice4: "Lifecycle methods",
+                        answer: 3,
+                        explanation: "Props (short for properties) are inputs to a React component. They are passed from parent to child components and are immutable within the child component."
+                    },
+                    {
+                        question: "What is state in React?",
+                        choice1: "A component's internal data that can change over time",
+                        choice2: "The props passed to a component",
+                        choice3: "The rendered output of a component",
+                        choice4: "The lifecycle stage of a component",
+                        answer: 1,
+                        explanation: "State in React is a component's internal data that can change over time. When state changes, the component re-renders. State is managed within the component (unlike props which are passed from outside)."
+                    }
+                ],
+                hard: [
+                    {
+                        question: "What are React Hooks?",
+                        choice1: "Functions that let you use state and other React features in functional components",
+                        choice2: "Lifecycle methods in class components",
+                        choice3: "Event handlers in React",
+                        choice4: "Tools for debugging React applications",
+                        answer: 1,
+                        explanation: "Hooks are functions that let you 'hook into' React state and lifecycle features from function components. They were introduced in React 16.8 to allow stateful logic in functional components."
+                    },
+                    {
+                        question: "What is the purpose of useEffect hook?",
+                        choice1: "To perform side effects in functional components",
+                        choice2: "To create a new state variable",
+                        choice3: "To optimize performance",
+                        choice4: "To handle user events",
+                        answer: 1,
+                        explanation: "The useEffect hook lets you perform side effects in functional components. It serves the same purpose as componentDidMount, componentDidUpdate, and componentWillUnmount in React classes."
+                    },
+                    {
+                        question: "What is context in React?",
+                        choice1: "A way to pass data through the component tree without having to pass props down manually",
+                        choice2: "The current state of the application",
+                        choice3: "The environment where the app is running",
+                        choice4: "The props of a component",
+                        answer: 1,
+                        explanation: "Context provides a way to pass data through the component tree without having to pass props down manually at every level. It's designed to share data that can be considered 'global' for a tree of React components."
+                    }
+                ]
+            },
+            node: {
+                easy: [
+                    {
+                        question: "What is Node.js?",
+                        choice1: "A JavaScript framework for front-end development",
+                        choice2: "A JavaScript runtime built on Chrome's V8 JavaScript engine",
+                        choice3: "A package manager for JavaScript",
+                        choice4: "A database management system",
+                        answer: 2,
+                        explanation: "Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine. It allows JavaScript to be run on the server side, enabling the development of scalable network applications."
+                    },
+                    {
+                        question: "Which of the following is NOT a core module in Node.js?",
+                        choice1: "http",
+                        choice2: "fs",
+                        choice3: "path",
+                        choice4: "dom",
+                        answer: 4,
+                        explanation: "The 'dom' module is not a core module in Node.js. Core modules include http, fs, path, events, and many others, but 'dom' is related to browser environments, not Node.js."
+                    },
+                    {
+                        question: "What is npm?",
+                        choice1: "Node Package Manager",
+                        choice2: "New Project Manager",
+                        choice3: "Node Project Manager",
+                        choice4: "Network Package Manager",
+                        answer: 1,
+                        explanation: "npm stands for Node Package Manager. It's the default package manager for Node.js and is used to install, share, and manage dependencies in Node.js projects."
+                    }
+                ],
+                medium: [
+                    {
+                        question: "What is the purpose of the require() function in Node.js?",
+                        choice1: "To include external modules",
+                        choice2: "To make HTTP requests",
+                        choice3: "To validate user input",
+                        choice4: "To create new objects",
+                        answer: 1,
+                        explanation: "The require() function is used in Node.js to include external modules that exist in separate files. It reads a JavaScript file, executes it, and then returns the exports object."
+                    },
+                    {
+                        question: "Which method is used to handle GET requests in Express.js?",
+                        choice1: "app.post()",
+                        choice2: "app.get()",
+                        choice3: "app.set()",
+                        choice4: "app.use()",
+                        answer: 2,
+                        explanation: "In Express.js, the app.get() method is used to handle GET requests. It takes two main arguments: the route path and a callback function to handle the request."
+                    },
+                    {
+                        question: "What is middleware in Express.js?",
+                        choice1: "Functions that have access to the request and response objects",
+                        choice2: "Database connection handlers",
+                        choice3: "Template engines",
+                        choice4: "Error handling functions",
+                        answer: 1,
+                        explanation: "Middleware functions are functions that have access to the request object (req), the response object (res), and the next middleware function in the application's request-response cycle."
+                    }
+                ],
+                hard: [
+                    {
+                        question: "What is the Event Loop in Node.js?",
+                        choice1: "A loop that continuously checks for events and executes callbacks",
+                        choice2: "A debugging tool",
+                        choice3: "A type of for loop",
+                        choice4: "A module for handling events",
+                        answer: 1,
+                        explanation: "The Event Loop is what allows Node.js to perform non-blocking I/O operations despite being single-threaded. It continuously checks for events and executes the associated callbacks."
+                    },
+                    {
+                        question: "What is the purpose of the cluster module in Node.js?",
+                        choice1: "To create child processes that share server ports",
+                        choice2: "To manage database clusters",
+                        choice3: "To group related modules together",
+                        choice4: "To handle clustering algorithms",
+                        answer: 1,
+                        explanation: "The cluster module allows you to create child processes (workers) that all share server ports. This helps in scaling Node.js applications across multiple CPU cores."
+                    },
+                    {
+                        question: "What does REPL stand for in Node.js?",
+                        choice1: "Read-Eval-Print-Loop",
+                        choice2: "Run-Execute-Print-Log",
+                        choice3: "Read-Execute-Process-Loop",
+                        choice4: "Runtime-Execution-Print-Log",
+                        answer: 1,
+                        explanation: "REPL stands for Read-Eval-Print-Loop. It's a simple, interactive programming environment that takes single user inputs, executes them, and returns the result to the user."
+                    }
+                ]
+            },
+            python: {
+                easy: [
+                    {
+                        question: "Which of the following is the correct way to create a list in Python?",
+                        choice1: "list = []",
+                        choice2: "list = list()",
+                        choice3: "list = {}",
+                        choice4: "Both 1 and 2",
+                        answer: 4,
+                        explanation: "In Python, you can create a list either by using square brackets [] or by using the list() constructor. Curly braces {} are used for dictionaries, not lists."
+                    },
+                    {
+                        question: "What is the output of print(3 * 'hi') in Python?",
+                        choice1: "hihihi",
+                        choice2: "3hi",
+                        choice3: "hi hi hi",
+                        choice4: "Error",
+                        answer: 1,
+                        explanation: "In Python, multiplying a string by an integer n concatenates the string n times. So 3 * 'hi' results in 'hihihi'."
+                    },
+                    {
+                        question: "Which keyword is used to define a function in Python?",
+                        choice1: "func",
+                        choice2: "def",
+                        choice3: "function",
+                        choice4: "define",
+                        answer: 2,
+                        explanation: "In Python, functions are defined using the 'def' keyword followed by the function name and parentheses containing any parameters."
+                    }
+                ],
+                medium: [
+                    {
+                        question: "What does the 'pass' statement do in Python?",
+                        choice1: "Terminates the program",
+                        choice2: "Does nothing, acts as a placeholder",
+                        choice3: "Skips the current iteration in a loop",
+                        choice4: "Passes variables between functions",
+                        answer: 2,
+                        explanation: "The 'pass' statement is a null operation in Python - it does nothing when executed. It's useful as a placeholder when a statement is required syntactically but you don't want any code to execute."
+                    },
+                    {
+                        question: "What is the output of [x for x in range(5)] in Python?",
+                        choice1: "[0, 1, 2, 3, 4]",
+                        choice2: "[1, 2, 3, 4, 5]",
+                        choice3: "[5]",
+                        choice4: "Error",
+                        answer: 1,
+                        explanation: "This is a list comprehension that generates a list of numbers from 0 to 4 (range(5) generates numbers from 0 to 4). So the output is [0, 1, 2, 3, 4]."
+                    },
+                    {
+                        question: "Which method would you use to remove the last item from a list in Python?",
+                        choice1: "list.remove()",
+                        choice2: "list.pop()",
+                        choice3: "list.delete()",
+                        choice4: "list.discard()",
+                        answer: 2,
+                        explanation: "The pop() method removes and returns the last item from the list if no index is specified. remove() removes the first matching value, and the other options are not valid list methods."
+                    }
+                ],
+                hard: [
+                    {
+                        question: "What is the difference between 'is' and '==' in Python?",
+                        choice1: "'is' compares values, '==' compares identities",
+                        choice2: "'is' compares identities, '==' compares values",
+                        choice3: "They are identical",
+                        choice4: "'is' is for numbers, '==' is for strings",
+                        answer: 2,
+                        explanation: "The 'is' operator compares the identity (memory address) of two objects, while '==' compares their values. Two objects can have the same value but be different objects in memory."
+                    },
+                    {
+                        question: "What does the @property decorator do in Python?",
+                        choice1: "Marks a method as a property getter",
+                        choice2: "Creates a read-only attribute",
+                        choice3: "Both 1 and 2",
+                        choice4: "Converts a method to a class method",
+                        answer: 3,
+                        explanation: "The @property decorator allows you to define a method that can be accessed like an attribute (getter) and by default creates a read-only property. You can also define setters and deleters for the property."
+                    },
+                    {
+                        question: "What is a generator in Python?",
+                        choice1: "A function that returns an iterable set of items one at a time",
+                        choice2: "A special type of iterator",
+                        choice3: "A function that uses yield instead of return",
+                        choice4: "All of the above",
+                        answer: 4,
+                        explanation: "A generator is a special type of iterator that's created by a function using yield instead of return. It generates values one at a time, which makes it memory efficient for large datasets."
+                    }
+                ]
+            },
+            java: {
+                easy: [
+                    {
+                        question: "Which of these is NOT a primitive data type in Java?",
+                        choice1: "int",
+                        choice2: "boolean",
+                        choice3: "String",
+                        choice4: "char",
+                        answer: 3,
+                        explanation: "String is not a primitive data type in Java. It's a class. The primitive data types in Java are byte, short, int, long, float, double, boolean, and char."
+                    },
+                    {
+                        question: "What is the correct syntax to create an object of class 'Car' in Java?",
+                        choice1: "Car car = new Car();",
+                        choice2: "Car car = Car();",
+                        choice3: "car = new Car();",
+                        choice4: "new Car car = Car();",
+                        answer: 1,
+                        explanation: "The correct syntax to create an object in Java is: ClassName objectName = new ClassName(); So 'Car car = new Car();' is correct."
+                    },
+                    {
+                        question: "Which keyword is used to define a constant in Java?",
+                        choice1: "const",
+                        choice2: "final",
+                        choice3: "static",
+                        choice4: "constant",
+                        answer: 2,
+                        explanation: "The 'final' keyword is used to define constants in Java. Variables declared as final can't be modified after initialization. 'const' is a reserved word but not used in Java."
+                    }
+                ],
+                medium: [
+                    {
+                        question: "What is method overloading in Java?",
+                        choice1: "Changing the return type of a method",
+                        choice2: "Having multiple methods with same name but different parameters",
+                        choice3: "Making a method static",
+                        choice4: "Extending a method from parent class",
+                        answer: 2,
+                        explanation: "Method overloading is having multiple methods with the same name but different parameters (different type, number, or order of parameters) in the same class."
+                    },
+                    {
+                        question: "What is the default value of a boolean variable in Java?",
+                        choice1: "true",
+                        choice2: "false",
+                        choice3: "null",
+                        choice4: "0",
+                        answer: 2,
+                        explanation: "The default value of a boolean variable in Java is false. For other primitives: byte, short, int, long default to 0; float and double to 0.0; char to '\u0000'."
+                    },
+                    {
+                        question: "Which collection class allows you to associate a key with a value?",
+                        choice1: "ArrayList",
+                        choice2: "LinkedList",
+                        choice3: "HashMap",
+                        choice4: "HashSet",
+                        answer: 3,
+                        explanation: "HashMap (and other Map implementations like TreeMap) allow you to store key-value pairs. ArrayList, LinkedList, and HashSet store single values, not pairs."
+                    }
+                ],
+                hard: [
+                    {
+                        question: "What is the difference between '==', equals(), and hashCode() in Java?",
+                        choice1: "'==' compares references, equals() compares content, hashCode() returns a unique identifier",
+                        choice2: "'==' compares content, equals() compares references, hashCode() returns memory address",
+                        choice3: "They all do the same thing",
+                        choice4: "'==' compares primitives, equals() compares objects, hashCode() is unrelated",
+                        answer: 1,
+                        explanation: "'==' compares object references (memory addresses), equals() compares the actual content of objects (when properly overridden), and hashCode() returns a hash code value used in hash tables."
+                    },
+                    {
+                        question: "What is the Java Virtual Machine (JVM)?",
+                        choice1: "A virtual computer that executes Java bytecode",
+                        choice2: "A tool for compiling Java code",
+                        choice3: "An IDE for Java development",
+                        choice4: "A Java framework",
+                        answer: 1,
+                        explanation: "The JVM is a virtual machine that executes Java bytecode. It provides a runtime environment in which Java bytecode can be executed, handling memory management, garbage collection, and security."
+                    },
+                    {
+                        question: "What is polymorphism in Java?",
+                        choice1: "The ability of an object to take many forms",
+                        choice2: "Using multiple methods with the same name",
+                        choice3: "The ability to write code that works with objects of different types",
+                        choice4: "All of the above",
+                        answer: 4,
+                        explanation: "Polymorphism in Java is the ability of an object to take many forms (subclass instances treated as superclass instances), achieved through method overloading (compile-time) and method overriding (runtime)."
+                    }
+                ]
+            }
+        };
+
+        // Event Listeners
+        startBtn.addEventListener('click', startGame);
+        highscoresBtn.addEventListener('click', showHighScores);
+        settingsBtn.addEventListener('click', () => {
+            settings.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+        closeSettings.addEventListener('click', saveSettings);
+        nextQuestionBtn.addEventListener('click', () => {
+            feedbackModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            choices.forEach(choice => {
+                choice.classList.remove('correct', 'incorrect');
+            });
+            getNewQuestion();
+        });
+        playAgainBtn.addEventListener('click', startGame);
+        goHomeBtn.addEventListener('click', goHome);
+        goHomeFromScores.addEventListener('click', goHome);
+        themeToggle.addEventListener('click', toggleTheme);
+        
+        // Category and difficulty selection
+        document.querySelectorAll('.category-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.category-item').forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                selectedCategory = item.dataset.category;
+                
+                // Add animation effect
+                item.classList.add('pulse');
+                setTimeout(() => {
+                    item.classList.remove('pulse');
+                }, 500);
+            });
+        });
+        
+        document.querySelectorAll('.difficulty-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.difficulty-item').forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                selectedDifficulty = item.dataset.difficulty;
+                
+                // Add animation effect
+                item.classList.add('pulse');
+                setTimeout(() => {
+                    item.classList.remove('pulse');
+                }, 500);
+            });
+        });
+        
+        // Settings controls
+        document.getElementById('soundToggle').addEventListener('change', (e) => {
+            soundEnabled = e.target.checked;
+        });
+        
+        document.getElementById('explanationsToggle').addEventListener('change', (e) => {
+            explanationsEnabled = e.target.checked;
+        });
+        
+        document.getElementById('timerToggle').addEventListener('change', (e) => {
+            timerEnabled = e.target.checked;
+        });
+        
+        document.getElementById('questionsRange').addEventListener('input', (e) => {
+            totalQuestions = parseInt(e.target.value);
+            document.getElementById('questionsValue').textContent = totalQuestions;
+        });
+        
+        document.getElementById('timeRange').addEventListener('input', (e) => {
+            timePerQuestion = parseInt(e.target.value);
+            document.getElementById('timeValue').textContent = timePerQuestion;
+        });
+        
+        // Initialize
+        document.querySelector('.category-item.html-color').classList.add('selected');
+        document.querySelector('.difficulty-item[data-difficulty="medium"]').classList.add('selected');
+
+        function cleanup() {
+            clearInterval(timer);
+            const confetti = document.querySelectorAll('.confetti');
+            confetti.forEach(c => c.remove());
+        }
+        
+        // Functions
+        function startGame() {
+            cleanup();
+            score = 0;
+            questionCounter = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            timeTaken = 0;
+            availableQuestions = [];
+            
+            // Show loading screen
+            home.style.display = 'none';
+            game.style.display = 'none';
+            end.style.display = 'none';
+            highScores.style.display = 'none';
+            loading.style.display = 'flex';
+            
+            // Simulate loading questions
+            setTimeout(() => {
+                // Get questions from database based on category and difficulty
+                const categoryQuestions = questionsDatabase[selectedCategory][selectedDifficulty];
+                
+                // Randomly select the required number of questions
+                availableQuestions = [...categoryQuestions]
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, totalQuestions);
+                
+                loading.style.display = 'none';
+                game.style.display = 'block';
+                
+                getNewQuestion();
+            }, 1500);
+        }
+        
+        function getNewQuestion() {
+            if (availableQuestions.length === 0 || questionCounter >= totalQuestions) {
+                return endGame();
+            }
+            
+            questionCounter++;
+            questionCounterText.innerText = `${questionCounter}/${totalQuestions}`;
+            
+            // Update progress bar
+            progressBarFull.style.width = `${(questionCounter / totalQuestions) * 100}%`;
+            
+            const questionIndex = Math.floor(Math.random() * availableQuestions.length);
+            currentQuestion = availableQuestions[questionIndex];
+            availableQuestions.splice(questionIndex, 1);
+            
+            questionElement.innerText = currentQuestion.question;
+            
+            // Animate question appearance
+            questionElement.classList.add('slide-in');
+            setTimeout(() => {
+                questionElement.classList.remove('slide-in');
+            }, 500);
+            
+            // Set choices
+            choices.forEach(choice => {
+                const number = choice.dataset.number;
+                choice.querySelector('.choice-text').textContent = currentQuestion['choice' + number];
+                choice.classList.remove('correct', 'incorrect');
+                
+                // Animate choices
+                choice.style.opacity = 0;
+                choice.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    choice.style.opacity = 1;
+                    choice.style.transform = 'translateY(0)';
+                    choice.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                }, number * 100);
+            });
+            
+            acceptingAnswers = true;
+            
+            // Start timer if enabled
+            if (timerEnabled) {
+                startTimer();
+                timerCount.style.display = 'flex';
+                timerCircle.style.display = 'block';
+            } else {
+                timerCount.style.display = 'none';
+                timerCircle.style.display = 'none';
+            }
+        }
+        
+        function startTimer() {
+            let timeLeft = timePerQuestion;
+            timerCount.innerText = timeLeft;
+            
+            // Reset timer circle
+            timerCircle.style.background = `conic-gradient(var(--primary-color) 0% 100%, #dfe6e9 100% 100%)`;
+            
+            clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                timerCount.innerText = timeLeft;
+                
+                // Update timer circle
+                const percentage = (timeLeft / timePerQuestion) * 100;
+                timerCircle.style.background = `conic-gradient(var(--primary-color) 0% ${percentage}%, #dfe6e9 ${percentage}% 100%)`;
+                
+                // Change color when time is running out
+                if (timeLeft <= 5) {
+                    timerCount.style.color = '#d63031';
+                    timerCircle.style.background = `conic-gradient(#d63031 0% ${percentage}%, #dfe6e9 ${percentage}% 100%)`;
+                } else {
+                    timerCount.style.color = '';
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    timeTaken += timePerQuestion;
+                    incorrectAnswers++;
+                    
+                    // Show feedback for timeout
+                    if (explanationsEnabled) {
+                        showFeedback(null, currentQuestion.answer);
+                    } else {
+                        getNewQuestion();
+                    }
+                }
+            }, 1000);
+        }
+        
+        choices.forEach(choice => {
+            choice.addEventListener('click', e => {
+                if (!acceptingAnswers) return;
+                
+                acceptingAnswers = false;
+                clearInterval(timer);
+                
+                const selectedChoice = e.currentTarget;
+                const selectedAnswer = parseInt(selectedChoice.dataset.number);
+                
+                // Calculate time used for this question
+                const timeUsed = timePerQuestion - parseInt(timerCount.innerText);
+                timeTaken += timeUsed;
+                
+                // Check if answer is correct
+                const isCorrect = selectedAnswer === currentQuestion.answer;
+                
+                // Apply visual feedback
+                if (isCorrect) {
+                    selectedChoice.classList.add('correct');
+                    
+                    // Calculate score based on time left
+                    const timeLeft = parseInt(timerCount.innerText);
+                    const points = Math.ceil((timeLeft / timePerQuestion) * 100) + 100;
+                    score += points;
+                    correctAnswers++;
+                    
+                    // Play sound if enabled
+                    if (soundEnabled) {
+                        playSound('correct');
+                    }
+                } else {
+                    selectedChoice.classList.add('incorrect');
+                    incorrectAnswers++;
+                    
+                    // Highlight correct answer
+                    const correctChoice = choices.find(choice => 
+                        parseInt(choice.dataset.number) === currentQuestion.answer
+                    );
+                    correctChoice.classList.add('correct');
+                    
+                    // Play sound if enabled
+                    if (soundEnabled) {
+                        playSound('incorrect');
+                    }
+                }
+                
+                // Update score display with animation
+                scoreText.textContent = score;
+                scoreText.classList.add('pulse');
+                setTimeout(() => {
+                    scoreText.classList.remove('pulse');
+                }, 500);
+                
+                // Show feedback if enabled
+                if (explanationsEnabled) {
+                    showFeedback(selectedAnswer, currentQuestion.answer);
+                } else {
+                    setTimeout(() => {
+                        getNewQuestion();
+                    }, 1000);
+                }
+            });
+        });
+        
+        function showFeedback(selectedAnswer, correctAnswer) {
+            document.body.style.overflow = 'hidden';
+            
+            if (selectedAnswer !== null) {
+                userAnswerElement.textContent = currentQuestion[`choice${selectedAnswer}`];
+                document.querySelector('.incorrect-answer').style.display = 'flex';
+            } else {
+                userAnswerElement.textContent = "Time's up! No answer selected.";
+                document.querySelector('.incorrect-answer').style.display = 'none';
+            }
+            
+            correctAnswerElement.textContent = currentQuestion[`choice${correctAnswer}`];
+            explanationElement.textContent = currentQuestion.explanation;
+            
+            feedbackModal.style.display = 'flex';
+        }
+        
+        function playSound(type) {
+            if (!soundEnabled) return;
+            
+            const audio = new Audio();
+            audio.src = type === 'correct' ? 
+                'https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3' : 
+                'https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3';
+            audio.play();
+        }
+        
+        function endGame() {
+            game.style.display = 'none';
+            end.style.display = 'block';
+            
+            finalScoreElement.textContent = score;
+            correctAnswersElement.textContent = correctAnswers;
+            incorrectAnswersElement.textContent = incorrectAnswers;
+            timeTakenElement.textContent = timeTaken;
+            
+            // Show confetti for good score (80% or more of max possible)
+            const maxPossibleScore = totalQuestions * 200;
+            if (score >= maxPossibleScore * 0.8) {
+                createConfetti();
+                
+                // Play celebration sound if enabled
+                if (soundEnabled) {
+                    const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3');
+                    audio.play();
+                }
+            }
+        }
+        
+        function createConfetti() {
+            for (let i = 0; i < 15; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDelay = Math.random() * -5 + 's';
+                confetti.style.backgroundColor = getRandomColor();
+                document.body.appendChild(confetti);
+                
+                // Remove confetti after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+            
+            function getRandomColor() {
+                const colors = ['#f2d74e', '#95c3de', '#ff9a91', '#a8e6cf', '#dcedc1', '#ffaaa5', '#ff8b94'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+        }
+        
+        function saveSettings() {
+            settings.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        function showHighScores() {
+            home.style.display = 'none';
+            highScores.style.display = 'block';
+            
+            // Load high scores from localStorage or use sample data
+            let savedScores = JSON.parse(localStorage.getItem('quizHighScores')) || [];
+            
+            // If no saved scores, use sample data
+            if (savedScores.length === 0) {
+                savedScores = [
+                    { name: 'CodeMaster', score: 1950, category: 'JavaScript', difficulty: 'Hard', date: new Date().toISOString() },
+                    { name: 'WebWizard', score: 1850, category: 'React', difficulty: 'Hard', date: new Date().toISOString() },
+                    { name: 'ScriptNinja', score: 1750, category: 'Node.js', difficulty: 'Medium', date: new Date().toISOString() },
+                    { name: 'PixelPerfect', score: 1650, category: 'CSS', difficulty: 'Hard', date: new Date().toISOString() },
+                    { name: 'ByteMe', score: 1550, category: 'Python', difficulty: 'Medium', date: new Date().toISOString() }
+                ];
+            }
+            
+            // Sort scores by value (descending)
+            savedScores.sort((a, b) => b.score - a.score);
+            
+            const highScoresList = document.getElementById('highScoresList');
+            highScoresList.innerHTML = '';
+            
+            // Display top 10 scores
+            savedScores.slice(0, 10).forEach((score, index) => {
+                const li = document.createElement('li');
+                li.className = 'high-score';
+                
+                // Add medal emoji for top 3
+                let medal = '';
+                if (index === 0) medal = '🥇 ';
+                else if (index === 1) medal = '🥈 ';
+                else if (index === 2) medal = '🥉 ';
+                
+                li.innerHTML = `
+                    <div class="score-info">
+                        <span>${medal}${score.name}</span>
+                        <span class="score-category">${score.category} • ${score.difficulty} • ${new Date(score.date).toLocaleDateString()}</span>
+                    </div>
+                    <span class="score-points">${score.score}</span>
+                `;
+                highScoresList.appendChild(li);
+            });
+        }
+        
+        function goHome() {
+            cleanup();
+            clearInterval(timer);
+            home.style.display = 'block';
+            game.style.display = 'none';
+            end.style.display = 'none';
+            highScores.style.display = 'none';
+            loading.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            themeToggle.textContent = document.body.classList.contains('dark-mode') ? '🌙' : '☀️';
+            
+            // Save preference
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            
+            // Add animation effect
+            themeToggle.classList.add('pulse');
+            setTimeout(() => {
+                themeToggle.classList.remove('pulse');
+            }, 500);
+        }
+
+        // Initialize theme from localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                themeToggle.textContent = '🌙';
+            }
+            
+            // Add animation to home screen elements
+            setTimeout(() => {
+                document.querySelector('h1').classList.add('floating');
+                document.querySelectorAll('.category-item, .difficulty-item').forEach(item => {
+                    item.style.opacity = 0;
+                    item.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        item.style.opacity = 1;
+                        item.style.transform = 'translateY(0)';
+                        item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    }, 100);
+                });
+            }, 100);
+        });
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === settings) {
+                settings.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+            
+            if (e.target === feedbackModal) {
+                feedbackModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                getNewQuestion();
+            }
+        });
+        
+        // Close feedback modal with X button
+        document.querySelector('.close-modal').addEventListener('click', () => {
+            feedbackModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            getNewQuestion();
+        });
+        
+        // Save score form
+        saveScoreForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            if (!username) return;
+            
+            // Get existing scores or initialize empty array
+            const savedScores = JSON.parse(localStorage.getItem('quizHighScores')) || [];
+            
+            // Add new score
+            savedScores.push({
+                name: username,
+                score: score,
+                category: document.querySelector('.category-item.selected').textContent.trim(),
+                difficulty: selectedDifficulty,
+                date: new Date().toISOString()
+            });
+            
+            // Save to localStorage
+            localStorage.setItem('quizHighScores', JSON.stringify(savedScores));
+            
+            // Show high scores
+            end.style.display = 'none';
+            showHighScores();
+        });
+    </script>
+</body>
+</html>
